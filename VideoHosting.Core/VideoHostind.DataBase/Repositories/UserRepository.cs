@@ -30,9 +30,9 @@ namespace VideoHosting.DataBase.Repositories
         {
             str = str.ToLower();
             return await _context.Users
-                                 .Where(x => x.Name.ToLower().Contains(str) || x.Surname.ToLower().Contains(str) || (x.Name + x.Surname)
-                                                                                                                    .ToLower()
-                                                                                                                    .Contains(str))
+                                 .Where(x => x.Name.ToLower().Contains(str) || 
+                                 x.Surname.ToLower().Contains(str) || 
+                                 (x.Name + x.Surname).ToLower().Contains(str))
                                  .ToListAsync();
         }
     }

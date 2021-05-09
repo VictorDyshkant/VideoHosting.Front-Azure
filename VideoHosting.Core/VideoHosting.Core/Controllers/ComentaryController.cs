@@ -15,6 +15,7 @@ namespace VideoHosting.Core.Controllers
     public class CommentaryController : ControllerBase
     {
         private readonly ICommentaryService _commentaryService;
+
         public CommentaryController(ICommentaryService service)
         {
             _commentaryService = service;
@@ -37,6 +38,7 @@ namespace VideoHosting.Core.Controllers
                 await _commentaryService.AddCommentary(model);
                 return Ok("You added Commentary");
             }
+
             return BadRequest();
         }
 
@@ -50,8 +52,8 @@ namespace VideoHosting.Core.Controllers
                 await _commentaryService.RemoveCommentary(id);
                 return Ok("This Commentary was deleted");
             }
-            return Unauthorized();
 
+            return Unauthorized();
         }
     }
 }

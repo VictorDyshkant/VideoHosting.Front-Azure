@@ -35,7 +35,7 @@ namespace VideoHosting.Core.Controllers
                 return BadRequest("Invalid data");
             }
 
-            return Ok(_userService.DoesExist(model.Email, model.PhoneNumber));
+            return Ok(_userService.DoesExist(model.Email));
         }
 
         [HttpPost]

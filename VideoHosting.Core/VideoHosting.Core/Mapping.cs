@@ -16,8 +16,7 @@ namespace VideoHosting.Core
 
             CreateMap<UserRegistrationModel, UserLoginDto>()
                 .ForMember(x=>x.Email, opt => opt.MapFrom(c => c.Email))
-                .ForMember(x=>x.Password, opt => opt.MapFrom(c => c.Password))
-                .ForMember(x=>x.PhoneNumber, opt => opt.MapFrom(c => c.PhoneNumber));
+                .ForMember(x=>x.Password, opt => opt.MapFrom(c => c.Password));
 
             CreateMap<UserRegistrationModel, UserDto>()
                 .ForMember(x => x.Name, opt => opt.MapFrom(c => c.Name))
