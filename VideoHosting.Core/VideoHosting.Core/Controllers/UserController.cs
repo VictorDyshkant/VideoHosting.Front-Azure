@@ -11,7 +11,7 @@ using VideoHosting.Abstractions.Services;
 
 namespace VideoHosting.Core.Controllers
 {
-    [Route("api")]
+    [Route("api/[controller]")]
     [ApiController]
     public class UserController : ControllerBase
     {
@@ -25,12 +25,11 @@ namespace VideoHosting.Core.Controllers
             _userService = service;
         }
 
-
         [HttpPost]
         [Route("Exist")]
         public ActionResult IsExist(LoginUserModel model)
         {
-            if (ModelState.IsValid)
+            if (!ModelState.IsValid)
             {
                 return BadRequest("Invalid data");
             }

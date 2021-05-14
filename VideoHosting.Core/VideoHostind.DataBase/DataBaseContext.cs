@@ -103,6 +103,9 @@ namespace VideoHosting.DataBase
             //   .WithOne(x => x.Video)
             //   .HasForeignKey(x => x.VideoId); 
 
+            builder.Entity<AppSwitch>()
+                .HasKey(x => x.Key);
+
             base.OnModelCreating(builder);
         }
     }

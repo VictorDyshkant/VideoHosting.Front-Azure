@@ -11,15 +11,15 @@ using IAuthorizationService = VideoHosting.Abstractions.Services.IAuthorizationS
 
 namespace VideoHosting.Core.Controllers
 {
-    [Route("api")]
+    [Route("api/[controller]")]
     [ApiController]
-    public class Authorization : ControllerBase
+    public class AuthorizationController : ControllerBase
     {
         private readonly IAuthorizationService _authorizationService;
         private readonly IUserService _userService;
         private readonly IMapper _mapper;
 
-        public Authorization(IAuthorizationService authorizationService, IUserService userService, IMapper mapper)
+        public AuthorizationController(IAuthorizationService authorizationService, IUserService userService, IMapper mapper)
         {
             _authorizationService = authorizationService;
             _userService = userService;

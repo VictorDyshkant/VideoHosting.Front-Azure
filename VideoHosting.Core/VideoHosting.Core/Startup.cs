@@ -10,7 +10,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.FileProviders;
 using Microsoft.IdentityModel.Tokens;
-//using Swashbuckle.AspNetCore.Swagger;
+using Swashbuckle.AspNetCore.Swagger;
 using VideoHosting.Abstractions.Repositories;
 using VideoHosting.DataBase;
 using VideoHosting.Abstractions.Services;
@@ -20,6 +20,7 @@ using VideoHosting.DataBase.Repositories;
 using VideoHosting.DataBase.UnitOfWork;
 using VideoHosting.Domain.Entities;
 using VideoHosting.Services.Services;
+using Microsoft.OpenApi.Models;
 
 namespace VideoHosting.Core
 {
@@ -60,10 +61,10 @@ namespace VideoHosting.Core
                            };
                        });
 
-            //services.AddSwaggerGen(c =>
-            //{
-            //    c.SwaggerDoc("v1", new Info { Title = "My API", Version = "v1" });
-            //});
+            services.AddSwaggerGen(c =>
+            {
+                c.SwaggerDoc("v1", new OpenApiInfo { Title = "My API", Version = "v1" });
+            });
             services.AddCors(options =>
             {
                 options.AddPolicy("CorsPolicy",
@@ -76,6 +77,7 @@ namespace VideoHosting.Core
 
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
             services.AddMvcCore().AddDataAnnotations();
+            ConfigureDependencies(services);
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -88,11 +90,12 @@ namespace VideoHosting.Core
             }
 
             app.UseMiddleware<LogMiddleware>();
-            //app.UseSwagger();
-            //app.UseSwaggerUI(c =>
-            //{
-            //    c.SwaggerEndpoint("/swagger/v1/swagger.json", "My API V1");
-            //});
+            app.UseSwagger();
+            app.UseSwaggerUI(c =>
+            {
+                c.SwaggerEndpoint("/swagger/v1/swagger.json", "My API V1");
+                c.RoutePrefix = string.Empty;
+            });
 
             app.UseDirectoryBrowser(new DirectoryBrowserOptions
             {

@@ -11,7 +11,7 @@ using VideoHosting.Services.Services;
 namespace VideoHosting.Core.Controllers
 {
     [Authorize]
-    [Route("api")]
+    [Route("api/[controller]")]
     [ApiController]
     public class VideoController : ControllerBase
     {

@@ -12,7 +12,7 @@ namespace VideoHosting.Core.Controllers
 {
 
     [Authorize(AuthenticationSchemes = "Bearer")]
-    [Route("api")]
+    [Route("api/[controller]")]
     [ApiController]
     public class CredentialController : ControllerBase
     {
