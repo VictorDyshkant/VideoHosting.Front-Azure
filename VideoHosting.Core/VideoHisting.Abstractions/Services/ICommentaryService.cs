@@ -14,5 +14,9 @@ namespace VideoHosting.Abstractions.Services
         Task<CommentaryDto> GetCommentaryById(Guid id);
 
         Task<IEnumerable<CommentaryDto>> GetCommentariesByVideoId(Guid videoId);
+
+        Task PutLike(Guid videoId, string userId);
+
+        Task PutDislike(Guid videoId, string userId);
     }
 }

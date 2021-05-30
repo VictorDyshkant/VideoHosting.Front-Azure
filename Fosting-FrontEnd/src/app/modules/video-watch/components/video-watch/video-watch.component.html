@@ -1,0 +1,78 @@
+<div class="container" *ngIf='video != null && user != null'>
+    <div class="div">
+        <div *ngIf='video.videoPath != null' class="video">
+            <video controls="controls" [poster]="video.videoPath">
+                <source [src]='video.videoPath'>
+            </video>
+        </div>
+        <div class='name'>{{video.name}}</div>
+        <div class="data">
+            <div class="day">Created : {{video.dayOfCreation | date}}</div>
+            <div>Views: {{video.views}} </div>
+            <div class='d-flex'>
+                <div class='like' (click)="putLike()">
+                    <img class="icon" src="assets/img/hand-thumbs-up.svg">
+                </div>{{video.likes}}
+                <div class='dislike' (click)="putDislike()">
+                    <img class="icon" src="assets/img/hand-thumbs-down.svg">
+                </div>{{video.dislikes}}
+            </div>
+            <div *ngIf='video.userId == userId || isAdmin' class='delete' (click)="deleteVideo()">
+                <img class="icon" src="assets/img/trash.svg">
+            </div>
+            <div></div>
+        </div>
+
+        <div class="description">{{video.description}}</div>
+
+        <div class="user">
+            <a [routerLink]='["/main/profile/"+video.userId+"/myvideo"]'>
+                <div class='img'>
+                    <img *ngIf='video.userPhoto != null' [src]='video.userPhoto'>
+                    <img *ngIf='video.userPhoto == null' src='assets/img/Face.png'>
+                </div>
+            </a>
+            <a [routerLink]='["/main/profile/"+video.userId+"/myvideo"]'>
+                <div class='username'>
+                    <h6>{{video.userName}}</h6>
+                    <h6>{{video.userSurname}}</h6>
+                </div>
+            </a>
+        </div>
+
+        <div class="makecomentary">
+            <div class='img'>
+                <img *ngIf='user.photoPath != null' [src]='user.photoPath'>
+                <img *ngIf='user.photoPath == null' src='assets/img/Face.png'>
+            </div>
+            <div class='username'>
+                <h6>{{user.name}}</h6>
+                <h6>{{user.surname}}</h6>
+            </div>
+            <textarea class="textarea" #comment></textarea>
+            <button class="btn btn-primary" (click)="createComment(comment)">Comment</button>
+        </div>
+
+        <div class='line'></div>
+        <div *ngFor='let comentary of comentaries' class="comentaries">
+            <div class='img'>
+                <a [routerLink]='["/main/profile/"+comentary.userId+"/myvideo"]'>
+                    <img *ngIf='comentary.userPhotoPath != null' [src]='comentary.userPhotoPath'>
+                    <img *ngIf='comentary.userPhotoPath == null' src='assets/img/Face.png'>
+                </a>
+            </div>
+            <div class='comentary'>
+                <a [routerLink]='["/main/profile/"+comentary.userId+"/myvideo"]'>
+                    <div style='color: black;font-size: 15px;'>{{comentary.userName+" "+comentary.userSurname}}
+                        {{comentary.dayOfCreation | date}}</div>
+                </a>
+                <div>{{comentary.content}}</div>
+            </div>
+            <div>
+                <img *ngIf='comentary.userId == userId || isAdmin' (click)="deleteComentary(comentary.id)" class="icon"
+                    src="assets/img/trash.svg">
+            </div>
+        </div>
+    </div>
+    <div style='height: 100px;'></div>
+</div>

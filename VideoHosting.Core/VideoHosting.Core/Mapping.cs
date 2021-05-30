@@ -10,10 +10,6 @@ namespace VideoHosting.Core
     {
         public Mapping()
         {
-
-	        CreateMap<UserDto, LoginUserModel>().ReverseMap();
-            CreateMap<LoginUserModel, UserDto>();
-
             CreateMap<UserRegistrationModel, UserLoginDto>()
                 .ForMember(x=>x.Email, opt => opt.MapFrom(c => c.Email))
                 .ForMember(x=>x.Password, opt => opt.MapFrom(c => c.Password));
@@ -21,8 +17,6 @@ namespace VideoHosting.Core
             CreateMap<UserRegistrationModel, UserDto>()
                 .ForMember(x => x.Name, opt => opt.MapFrom(c => c.Name))
                 .ForMember(x => x.Surname, opt => opt.MapFrom(c => c.Surname))
-                .ForMember(x => x.Sex, opt => opt.MapFrom(c => c.Sex))
-                .ForMember(x => x.Faculty, opt => opt.MapFrom(c => c.Faculty))
                 .ForMember(x => x.Group, opt => opt.MapFrom(c => c.Group));
         }
 

@@ -1,0 +1,13 @@
+<div class="page container mt-3">
+    <div class="form-group" id="searchBlock">
+        <h4 id="lbSearch">Search</h4>
+        <input class="form-control" id="searchLine" #searchLine type="text">
+        <button type="button" class="btn btn-light" id="btnSearch" (click)="find(searchLine.value)">
+            <img src="assets/img/search.svg">
+        </button>
+    </div>
+</div>
+
+<div class="users__block mt-3">
+    <app-user *ngFor="let user of $users | async" [user]=user></app-user>
+</div>

@@ -1,0 +1,25 @@
+<div class="form__wrapper">
+    <form class="container-sm custom__form" style="max-width: 540px;" #myForm="ngForm">
+        <h1>Login</h1>
+
+        <div class="form-group">
+            <label for="Email" class="form-label">Email address</label>
+            <input type="email" class="form-control" id="Email" name="Email" #email="ngModel"
+                [(ngModel)]="loginModel.Email" placeholder="name@example.com" required>
+        </div>
+
+        <div class="form-group">
+            <label for="Password" class="form-label">Password</label>
+            <input type="password" class="form-control" id="Password" name='Password' #password="ngModel"
+                [(ngModel)]="loginModel.Password" required pattern="[A-Z]+[a-z||0-9]+[0-9]+" minlength="8"
+                maxlength="15">
+        </div>
+
+        <div class="form-group d-flex justify-content-center">
+            <button [disabled]="myForm.invalid" class="btn btn-primary" (click)="login()">Login</button>
+        </div>
+        <div class="d-flex justify-content-center">
+            <a [routerLink]="['/registration']">Registrate</a>
+        </div>
+    </form>
+</div>

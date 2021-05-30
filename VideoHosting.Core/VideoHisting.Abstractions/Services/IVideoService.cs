@@ -19,14 +19,10 @@ namespace VideoHosting.Abstractions.Services
 
         Task<IEnumerable<VideoDto>> GetVideosOfUser(string userId);
 
-        Task AddVideo(VideoDto video);
+        Task<Guid> AddVideo(VideoAddDto video);
 
         Task RemoveVideo(Guid id);
 
         Task AddView(Guid id);
-
-        Task PutLike(Guid videoId, string userId);
-
-        Task PutDislike(Guid videoId, string userId);
     }
 }

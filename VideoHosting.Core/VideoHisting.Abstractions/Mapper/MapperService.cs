@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using AutoMapper;
-using Microsoft.Extensions.Configuration;
 using VideoHosting.Abstractions.Dto;
 using VideoHosting.Domain.Entities;
 
@@ -15,9 +15,7 @@ namespace VideoHosting.Abstractions.Mapper
                .ForMember(c => c.Id, x => x.MapFrom(c => c.Id))
                .ForMember(c => c.Name, x => x.MapFrom(c => c.Name))
                .ForMember(c => c.Surname, x => x.MapFrom(c => c.Surname))
-               .ForMember(c => c.Sex, x => x.MapFrom(c => c.Sex))
                .ForMember(c => c.Group, x => x.MapFrom(c => c.Group))
-               .ForMember(c => c.Faculty, x => x.MapFrom(c => c.Faculty))
                .ForMember(c => c.DateOfCreation, x => x.MapFrom(c => c.DateOfCreation))
                .ForMember(c => c.Subscribers, x => x.MapFrom(c => c.Subscribers.Count))
                .ForMember(c => c.Subscriptions, x => x.MapFrom(c => c.Subscriptions.Count))
@@ -26,17 +24,14 @@ namespace VideoHosting.Abstractions.Mapper
             CreateMap<UserDto, User>()
                 .ForMember(c => c.Name, x => x.MapFrom(c => c.Name))
                 .ForMember(c => c.Surname, x => x.MapFrom(c => c.Surname))
-                .ForMember(c => c.Sex, x => x.MapFrom(c => c.Sex))
                 .ForMember(c => c.Group, x => x.MapFrom(c => c.Group))
-                .ForMember(c => c.Faculty, x => x.MapFrom(c => c.Faculty))
                 .ForMember(c => c.DateOfCreation, x => x.MapFrom(c => DateTime.Now))
                 .ForMember(c => c.Subscribers, x => x.MapFrom(c => new List<UserUser>()))
                 .ForMember(c => c.Subscriptions, x => x.MapFrom(c => new List<UserUser>()));
 
             CreateMap<User, UserLoginDto>()
                 .ForMember(c => c.Id, x => x.MapFrom(c => c.Id))
-                .ForMember(c => c.Email, x => x.MapFrom(c => c.Email))
-                .ForMember(c => c.PhoneNumber, x => x.MapFrom(c => c.PhoneNumber));
+                .ForMember(c => c.Email, x => x.MapFrom(c => c.Email));
 
 
             CreateMap<Commentary, CommentaryDto>()
@@ -54,8 +49,8 @@ namespace VideoHosting.Abstractions.Mapper
                 .ForMember(v => v.PhotoPath, x => x.MapFrom(p => p.PhotoPath))
                 .ForMember(v => v.VideoPath, x => x.MapFrom(p => p.VideoPath))
                 .ForMember(v => v.Views, x => x.MapFrom(p => p.Views))
-                .ForMember(v => v.Likes, x => x.MapFrom(p => p.Likes.Count))
-                .ForMember(v => v.Dislikes, x => x.MapFrom(p => p.Dislikes.Count))
+                .ForMember(v => v.Likes, x => x.MapFrom(p => p.Reactions.Where(y => y.IsPositive).Count()))
+                .ForMember(v => v.Dislikes, x => x.MapFrom(p => p.Reactions.Where(y => !y.IsPositive).Count()))
                 .ForMember(v => v.DayOfCreation, x => x.MapFrom(p => p.DayOfCreation))
                 .ReverseMap();
         }

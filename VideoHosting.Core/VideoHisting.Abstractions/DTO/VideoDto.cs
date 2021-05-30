@@ -1,13 +1,10 @@
 ﻿using System;
-using System.ComponentModel.DataAnnotations;
 
 namespace VideoHosting.Abstractions.Dto
 {
     public class VideoDto
     {
         public Guid Id { get; set; }
-
-        public string UserId { get; set; }
 
         public string Name { get; set; }
 
@@ -28,5 +25,14 @@ namespace VideoHosting.Abstractions.Dto
         public bool Liked { get; set; }
 
         public bool Disliked { get; set; }
+
+        public string UserId { get; set; }
+
+        public string UserName { get; set; }
+
+        public string UserSurname { get; set; }
+
+        public string UserPhoto { get; set; }
+
     }
 }

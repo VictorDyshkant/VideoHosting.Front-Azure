@@ -1,0 +1,12 @@
+<nav class="navbar navbar-expand-sm navbar-light bg-light">
+    <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
+        <div class="navbar-nav">
+            <a class="nav-item nav-link" routerLink="/main/videosubscriptions"> Subscriptions</a>
+            <a class="nav-item nav-link" routerLink="/main/videofind">Videos</a>
+            <a class="nav-item nav-link" [routerLink]="['/main/profile/'+id]">User</a>
+        </div>
+    </div>
+
+    <button (click)="logout()" class="btn btn-primary">Logout</button>
+</nav>
+<router-outlet></router-outlet>

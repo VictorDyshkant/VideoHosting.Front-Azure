@@ -13,11 +13,11 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "VideoHisting.Services.Unit.
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "VideoHosting.Core.Unit.Test", "VideoHosting.Core.Unit.Test\VideoHosting.Core.Unit.Test.csproj", "{3F2969BE-9A8D-42EE-A288-852F3074E150}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VideoHosting.Abstractions", "VideoHisting.Abstractions\VideoHosting.Abstractions.csproj", "{A0B68938-4393-4F33-AC6A-A6A68FC50C25}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "VideoHosting.Abstractions", "VideoHisting.Abstractions\VideoHosting.Abstractions.csproj", "{A0B68938-4393-4F33-AC6A-A6A68FC50C25}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VideoHosting.Utilities", "VideoHosting.Utilities\VideoHosting.Utilities.csproj", "{E9889135-3E45-4160-9AEC-2FAEBC773517}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "VideoHosting.Utilities", "VideoHosting.Utilities\VideoHosting.Utilities.csproj", "{E9889135-3E45-4160-9AEC-2FAEBC773517}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VideoHosting.Domain", "VideoHosting.Domain\VideoHosting.Domain.csproj", "{44AAC189-588D-4759-A8AB-BBFA0C516D82}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "VideoHosting.Domain", "VideoHosting.Domain\VideoHosting.Domain.csproj", "{44AAC189-588D-4759-A8AB-BBFA0C516D82}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

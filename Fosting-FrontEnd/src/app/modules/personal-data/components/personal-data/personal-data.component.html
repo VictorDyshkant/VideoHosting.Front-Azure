@@ -1,0 +1,66 @@
+<div class='custom__form container'>
+    <form #myForm="ngForm">
+        <h1>User Info</h1>
+
+        <div class="form-group">
+            <label for="Name" class="form-label">Name</label>
+            <input type="text" class="form-control" id="Name" name='Name' #name="ngModel" [(ngModel)]="user.name"
+                required minlength="2" maxlength="15">
+
+            <div [hidden]="name.valid || name.untouched" class="alter alert-danger">
+                <div *ngIf="name.value == ''">
+                    Login is neccesary !!!
+                </div>
+                <div *ngIf="name.value == ''">
+                    Validation error
+                </div>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label for="Surname" class="form-label">Surname</label>
+            <input type="text" class="form-control" id="Surname" name="Surname" #surname="ngModel"
+                [(ngModel)]="user.surname" required minlength="2" maxlength="15">
+        </div>
+
+        <div class="form-group">
+            <label for="Group" class="form-label">Group</label>
+            <select class="form-control" id="Group" name="Group" #group="ngModel" [(ngModel)]="user.group" required>
+                <option value="SE 121">SE 121</option>
+                <option value="SE 122">SE 122</option>
+                <option value="SE 123">SE 123</option>
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label for="Email" class="form-label">Email address</label>
+            <input type="email" class="form-control" id="Email" name="Email" #email="ngModel" [(ngModel)]="user.email"
+                placeholder="name@example.com" required>
+        </div>
+
+        <div class="form-group d-flex justify-content-center">
+            <button [disabled]="myForm.invalid" class="btn btn-primary" (click)="updateInfo()">Update</button>
+        </div>
+    </form>
+
+
+</div>
+
+<div class="my-5 custom__form container">
+    <h1>User Photo</h1>
+
+    <div class="d-flex justify-content-center user__photo__block">
+        <div>
+            <img *ngIf='user.photoPath != null' class='img' [src]='user.photoPath'>
+            <img *ngIf='user.photoPath == null' class='img' src='assets/img/Face.png'>
+        </div>
+        <div class="upload__section">
+            <div class='form-group'>
+                <input type="file" class="form-control" id='photo' name="photo" (change)="loadPhoto($event)" />
+            </div>
+            <div class="form-group">
+                <button class="btn btn-primary" style="width: 100%;" [disabled]='photo == null' (click)="updatePhoto()">Load</button>
+            </div>
+        </div>
+    </div>
+</div>

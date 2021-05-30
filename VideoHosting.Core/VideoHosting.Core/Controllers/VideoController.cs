@@ -6,11 +6,12 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using VideoHosting.Abstractions.Dto;
 using VideoHosting.Abstractions.Services;
-using VideoHosting.Services.Services;
+using Microsoft.AspNetCore.Http;
+using System.Linq;
 
 namespace VideoHosting.Core.Controllers
 {
-    [Authorize]
+    [Authorize(AuthenticationSchemes = "Bearer")]
     [Route("api/[controller]")]
     [ApiController]
     public class VideoController : ControllerBase
@@ -23,16 +24,18 @@ namespace VideoHosting.Core.Controllers
         }
 
         [HttpPost]
-        [Route("video")]
-        public async Task<ActionResult> AddVideo(VideoDto model)
+        [Route("UploadVideo")]
+        [DisableRequestSizeLimit]
+        public async Task<ActionResult> AddVideo([FromForm] VideoAddDto model)
         {
+            model.UserId = User.Identity.Name;
             var files = HttpContext.Request.Form.Files;
             string path = Path.Combine(Directory.GetCurrentDirectory(), "UsersContent");
 
             for (int i = 0; i < 2; i++)
             {
                 string save = Guid.NewGuid().ToString();
-                if (files[i].FileName.Contains(".JPG") || files[i].FileName.Contains(".jpg"))
+                if (files[i].FileName.Contains(".jpg") || files[i].FileName.Contains(".jpeg"))
                 {
                     model.PhotoPath = save + ".jpg";
                     using (var stream = System.IO.File.Create(Path.Combine(path, "VideosPhotos", model.PhotoPath)))
@@ -51,20 +54,20 @@ namespace VideoHosting.Core.Controllers
                 if (files[i].FileName.Contains(".mp4"))
                 {
                     model.VideoPath = save + ".mp4";
-                    using (var stream = System.IO.File.Create(Path.Combine(path, "VideosPhotos", model.VideoPath)))
+                    using (var stream = System.IO.File.Create(Path.Combine(path, "UsersVideos", model.VideoPath)))
                     {
                         await files[i].CopyToAsync(stream);
                     }
                 }
             }
 
-            await _videoService.AddVideo(model);
+            Guid videoId = await _videoService.AddVideo(model);
 
-            return Ok(new [] { model.PhotoPath, model.VideoPath });
+            return Ok(videoId);
         }
 
         [HttpDelete]
-        [Route("video/{id}")]
+        [Route("DeleteVideo/{id}")]
         public async Task<ActionResult> DeleteVideo(Guid id)
         {
             VideoDto videoDto = await _videoService.GetVideoById(id, User.Identity.Name);
@@ -72,17 +75,20 @@ namespace VideoHosting.Core.Controllers
             {
                 await _videoService.RemoveVideo(id);
 
-                System.IO.File.Delete(Path.Combine(Directory.GetCurrentDirectory(), "UsersContent/VideosPhotos/" + videoDto.PhotoPath));
-                System.IO.File.Delete(Path.Combine(Directory.GetCurrentDirectory(), "UsersContent/UsersVideos/" + videoDto.VideoPath));
+                string videoPath = Path.Combine(Directory.GetCurrentDirectory(), "UsersContent\\VideosPhotos", videoDto.PhotoPath.Split("/").Last());
+                string imagePath = Path.Combine(Directory.GetCurrentDirectory(), "UsersContent\\UsersVideos", videoDto.VideoPath.Split("/").Last());
 
-                return Ok("This video was deleted");
+                System.IO.File.Delete(videoPath);
+                System.IO.File.Delete(imagePath);
+
+                return Ok(new { message = "This video was deleted" });
             }
 
             throw new Exception("You do not have permission");
         }
 
         [HttpGet]
-        [Route("video/{id}")]
+        [Route("GetVideoById/{id}")]
         public async Task<ActionResult> GetVideoById(Guid id)
         {
             VideoDto videoDto = await _videoService.GetVideoById(id, User.Identity.Name);
@@ -91,7 +97,7 @@ namespace VideoHosting.Core.Controllers
         }
 
         [HttpGet]
-        [Route("videosuser/{id}")]
+        [Route("UsersVideos/{id}")]
         public async Task<ActionResult> GetVideosOfUser(string id)
         {
             IEnumerable<VideoDto> videos = await _videoService.GetVideosOfUser(id);
@@ -99,15 +105,15 @@ namespace VideoHosting.Core.Controllers
         }
 
         [HttpGet]
-        [Route("videos")]
-        public async Task<ActionResult> GetVideosSubscribers()
+        [Route("GetVideosSubscripters")]
+        public async Task<ActionResult> GetVideosSubscripters()
         {
             IEnumerable<VideoDto> videos = await _videoService.GetVideosOfSubscripters(User.Identity.Name);
             return Ok(videos);
         }
 
         [HttpGet]
-        [Route("videosLiked/{id}")]
+        [Route("LikedVideos/{id}")]
         public async Task<ActionResult> GetLikedVideos(string id)
         {
             IEnumerable<VideoDto> videos = await _videoService.GetLikedVideos(id);
@@ -115,7 +121,7 @@ namespace VideoHosting.Core.Controllers
         }
 
         [HttpGet]
-        [Route("videosDisliked/{id}")]
+        [Route("DislikedVideos/{id}")]
         public async Task<ActionResult> GetDislikedVideos(string id)
         {
             IEnumerable<VideoDto> videos = await _videoService.GetDisLikedVideos(id);
@@ -131,28 +137,11 @@ namespace VideoHosting.Core.Controllers
         //}
 
         [HttpGet]
-        [Route("videos/{name}")]
-        public async Task<ActionResult> GetVideosName(string name)
+        [Route("GetVideosByName/{name}")]
+        public async Task<ActionResult> GetVideosByName(string name)
         {
             IEnumerable<VideoDto> videos = await _videoService.GetVideosByName(name, User.Identity.Name);
             return Ok(videos);
-        }
-
-
-        [HttpPut]
-        [Route("like/{id}")]
-        public async Task<ActionResult> PutLike(Guid id)
-        {
-            await _videoService.PutLike(id, User.Identity.Name);
-            return Ok();
-        }
-
-        [HttpPut]
-        [Route("dislike/{id}")]
-        public async Task<ActionResult> PutDislike(Guid id)
-        {
-            await _videoService.PutDislike(id, User.Identity.Name);
-            return Ok();
         }
     }
 }

@@ -8,13 +8,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Remove="UsersContent\**" />
-    <Content Remove="UsersContent\**" />
-    <EmbeddedResource Remove="UsersContent\**" />
-    <None Remove="UsersContent\**" />
-  </ItemGroup>
-
-  <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.App" />
     <PackageReference Include="Microsoft.AspNetCore.Identity" Version="2.2.0" />
     <PackageReference Include="Microsoft.AspNetCore.Razor.Design" Version="2.2.0" PrivateAssets="All" />
@@ -32,9 +25,9 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="UserContent\VideosPhotos\" />
-    <Folder Include="UserContent\UsersVideos\" />
-    <Folder Include="UserContent\UsersPhotos\" />
+    <Folder Include="UsersContent\VideosPhotos\" />
+    <Folder Include="UsersContent\UsersVideos\" />
+    <Folder Include="UsersContent\UsersPhotos\" />
   </ItemGroup>
 
   <ItemGroup>

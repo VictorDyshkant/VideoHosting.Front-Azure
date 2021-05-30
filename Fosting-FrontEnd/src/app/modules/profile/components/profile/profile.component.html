@@ -1,0 +1,40 @@
+<div class="container-xxl">
+    <div class="user_info my-5">
+        <div class="def d-flex">
+            <div class="def">
+                <img *ngIf='user.photoPath != null' class='image' [src]='user.photoPath'>
+                <img *ngIf='user.photoPath == null' class='image' src='assets/img/Face.png'>
+            </div>
+            <div class="mx-4 d-flex align-items-center">
+                <div>
+                    <h4>{{user.name}} {{user.surname}}</h4>
+                    <h5>Subscribers: {{user.subscribers}}</h5>
+                    <h6>{{user.group}}</h6>
+                </div>
+            </div>
+        </div>
+        <div class="subscibtion__section">
+            <button class="btn btn-primary" [disabled]="user.id == id" (click)="subscribe()">{{subText}}</button>
+            <a *ngIf="user.id == id" class="nav-link" [routerLink]="['/personalData']">Change info</a>
+        </div>
+    </div>
+
+    <div class="my-3">
+        <ul class="nav justify-content-center">
+            <li class="nav-item">
+                <a class="nav-link" routerLink="myvideo">User's videos</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" routerLink="likedvideo">Liked videos</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" routerLink="dislikedvideo">Disliked videos</a>
+            </li>
+            <li *ngIf="user.id == id" class="nav-item">
+                <a class="nav-link" routerLink="addvideo">Add video</a>
+            </li>
+        </ul>
+    </div>
+
+    <router-outlet></router-outlet>
+</div>

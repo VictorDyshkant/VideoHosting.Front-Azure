@@ -19,7 +19,6 @@ namespace VideoHosting.DataBase
 
             context.SaveChanges();
 
-
             User user1 = new User
             {
                 Email = "dyshkant2804@ukr.net", 
@@ -28,8 +27,7 @@ namespace VideoHosting.DataBase
                 Name = "Alla",
                 Surname = "Dyshkant",
                 DateOfCreation = DateTime.Now,
-                TempPassword = 0,
-                Sex = false
+                TempPassword = 0
             };
 
             var r1 = await userManager.CreateAsync(user1, "Dyshkant2804");
@@ -43,8 +41,7 @@ namespace VideoHosting.DataBase
                 Name = "Oleg",
                 Surname = "Dyshkant",
                 DateOfCreation = DateTime.Now,
-                TempPassword = 0,
-                Sex = true
+                TempPassword = 0
             };
             
             var r2 = await userManager.CreateAsync(user2, "Dyshkant280400");
@@ -59,8 +56,7 @@ namespace VideoHosting.DataBase
                 Name = "Victor",
                 Surname = "Dyshkant",
                 DateOfCreation = DateTime.Now,
-                TempPassword = 0,
-                Sex = true
+                TempPassword = 0
             };
             
             var r3 = await userManager.CreateAsync(admin, "Qwerty280400");

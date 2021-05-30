@@ -23,8 +23,9 @@ namespace VideoHosting.Services.Services
 
         public async Task AddCommentary(CommentaryDto commentaryDto)
         {
-           Commentary commentary = new Commentary
+            Commentary commentary = new Commentary
             {
+                Id = Guid.NewGuid(),
                 Content = commentaryDto.Content,
                 User = await _unit.UserRepository.GetUserById(commentaryDto.UserId),
                 Video = await _unit.VideoRepository.GetVideoById(commentaryDto.VideoId),
@@ -43,11 +44,6 @@ namespace VideoHosting.Services.Services
         public async Task<CommentaryDto> GetCommentaryById(Guid id)
         {
             Commentary commentary = await _unit.CommentaryRepository.GetCommentaryById(id);
-            if (commentary == null)
-            {
-                throw new InvalidDataException("Commentary do not exist");
-            }
-
             return _mapper.Map<CommentaryDto>(commentary);
         }
 
@@ -60,6 +56,32 @@ namespace VideoHosting.Services.Services
             }
 
             _unit.CommentaryRepository.RemoveCommentary(commentary);
+            await _unit.SaveAsync();
+        }
+
+        public async Task PutLike(Guid videoId, string userId)
+        {
+            User user = await _unit.UserRepository.GetUserById(userId);
+            Video video = await _unit.VideoRepository.GetVideoById(videoId);
+            if (video == null)
+            {
+                throw new InvalidDataException("This video do not exist");
+            }
+
+            user.AddLike(video);
+            await _unit.SaveAsync();
+        }
+
+        public async Task PutDislike(Guid videoId, string userId)
+        {
+            User user = await _unit.UserRepository.GetUserById(userId);
+            Video video = await _unit.VideoRepository.GetVideoById(videoId);
+            if (video == null)
+            {
+                throw new InvalidDataException("This video do not exist");
+            }
+
+            user.AddDislike(video);
             await _unit.SaveAsync();
         }
     }

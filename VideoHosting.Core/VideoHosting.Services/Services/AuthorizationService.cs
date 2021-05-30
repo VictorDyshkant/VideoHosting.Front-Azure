@@ -25,7 +25,7 @@ namespace VideoHosting.Services.Services
             User user = await _unitOfWork.UserManager.FindByEmailAsync(email);
             if (await _unitOfWork.UserManager.CheckPasswordAsync(user, password) == false)
             {
-                throw new InvalidDataException("Incorrect password");
+                return null;
             }
 
             var claims = new List<Claim>();

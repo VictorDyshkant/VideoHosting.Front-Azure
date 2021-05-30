@@ -84,7 +84,6 @@ namespace VideoHosting.Services.Services
             User user = await _unitOfWork.UserManager.FindByIdAsync(userDto.Id);
 
             user.Email = userDto.Email ?? user.Email;
-            user.PhoneNumber = userDto.PhoneNumber ?? user.PhoneNumber;
 
             await _unitOfWork.SaveAsync();
         }

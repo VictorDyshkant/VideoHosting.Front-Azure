@@ -18,7 +18,7 @@ namespace VideoHosting.Abstractions.Services
 
         Task<IEnumerable<UserDto>> GetUserBySubName(string str, string userId);
 
-        Task Subscribe(string subscriberId, string subscriptionId);
+        Task<bool> Subscribe(string subscriberId, string subscriptionId);
 
         Task UpdateProfile(UserDto userDto);
     }

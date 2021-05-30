@@ -104,7 +104,7 @@ namespace VideoHosting.Core.Controllers
         [HttpPut]
         [Route("updateUserLogin")]
         [Authorize(AuthenticationSchemes = "Bearer")]
-        public async Task<ActionResult> UpdateUserLogin(LoginUserModel model)
+        public async Task<ActionResult> UpdateUserLogin(string model)
         {
             if (ModelState.IsValid)
             {
@@ -117,13 +117,13 @@ namespace VideoHosting.Core.Controllers
             return BadRequest("Invalid data");
         }
 
-        [HttpGet]
-        [Route("loginUser")]
-        [Authorize(AuthenticationSchemes = "Bearer")]
-        public async Task<ActionResult> GetLoginUser()
-        {
-            UserLoginDto user = await _credentialService.GetUserLogin(User.Identity.Name);
-            return Ok(_mapper.Map<LoginUserModel>(user));
-        }
+        //[HttpGet]
+        //[Route("loginUser")]
+        //[Authorize(AuthenticationSchemes = "Bearer")]
+        //public async Task<ActionResult> GetLoginUser()
+        //{
+        //    UserLoginDto user = await _credentialService.GetUserLogin(User.Identity.Name);
+        //    return Ok(_mapper.Map<LoginUserModel>(user));
+        //}
     }
 }

@@ -1,0 +1,57 @@
+<div class="form__wrapper">
+    <form class="container-sm custom__form" style="max-width: 540px;" #myForm="ngForm">
+        <h1>Registration</h1>
+
+        <div class="form-group">
+            <label for="Name" class="form-label">Name</label>
+            <input type="text" class="form-control" id="Name" name='Name' #name="ngModel"
+                [(ngModel)]="registrationModel.Name" required minlength="2" maxlength="15">
+
+            <div [hidden]="name.valid || name.untouched" class="alter alert-danger">
+                <div *ngIf="name.value == ''">
+                    Login is neccesary !!!
+                </div>
+                <div *ngIf="name.value == ''">
+                    Validation error
+                </div>
+            </div>
+
+        </div>
+
+        <div class="form-group">
+            <label for="Surname" class="form-label">Surname</label>
+            <input type="text" class="form-control" id="Surname" name="Surname" #surname="ngModel"
+                [(ngModel)]="registrationModel.Surname" required minlength="2" maxlength="15">
+        </div>
+
+        <div class="form-group">
+            <label for="Group" class="form-label">Group</label>
+            <select class="form-control" id="Group" name="Group" #group="ngModel" [(ngModel)]="registrationModel.Group"
+                required>
+                <option value="SE 121">SE 121</option>
+                <option value="SE 122">SE 122</option>
+                <option value="SE 123">SE 123</option>
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label for="Email" class="form-label">Email address</label>
+            <input type="email" class="form-control" id="Email" name="Email" #email="ngModel"
+                [(ngModel)]="registrationModel.Email" placeholder="name@example.com" required>
+        </div>
+
+        <div class="form-group">
+            <label for="Password" class="form-label">Password</label>
+            <input type="password" class="form-control" id="Password" name='Password' #password="ngModel"
+                [(ngModel)]="registrationModel.Password" required pattern="[A-Z]+[a-z||0-9]+[0-9]+" minlength="8"
+                maxlength="15">
+        </div>
+
+        <div class="form-group d-flex justify-content-center">
+            <button [disabled]="myForm.invalid" class="btn btn-primary" (click)="registrate()">Registrate</button>
+        </div>
+        <div class="d-flex justify-content-center">
+            <a [routerLink]="['/login']">Login</a>
+        </div>
+    </form>
+</div>

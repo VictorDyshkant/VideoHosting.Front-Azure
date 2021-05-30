@@ -19,9 +19,7 @@ namespace VideoHosting.Domain.Entities
 
         public virtual List<Commentary> Commentaries { get; set; }
 
-        public virtual List<VideoUser> Likes { get; set; }
-
-        public virtual List<VideoUser> Dislikes { get; set; }
+        public virtual List<VideoUser> Reactions { get; set; }
 
         public string PhotoPath { get; set; }
 
@@ -30,8 +28,7 @@ namespace VideoHosting.Domain.Entities
         public Video()
         {
             Commentaries = new List<Commentary>();
-            Likes = new List<VideoUser>();
-            Dislikes = new List<VideoUser>();
+            Reactions = new List<VideoUser>();
         }
 
         public void AddCommentary(Commentary commentary)

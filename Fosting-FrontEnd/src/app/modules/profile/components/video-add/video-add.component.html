@@ -1,0 +1,22 @@
+<div>
+    <form #myForm="ngForm">
+        <div class='form-group'>
+            <input type='text' class="form-control" placeholder="Name" id='name' name="name" #name='ngModel'
+                [(ngModel)]="videoAdd.name" minlength="5" required>
+        </div>
+        <div class='form-group'>
+            <input type="file" class="form-control" id='photo' name="photo" (change)="loadPhoto($event)" />
+        </div>
+        <div class='form-group'>
+            <input type='file' class="form-control" id='video' name='video' (change)='loadVideo($event)' />
+        </div>
+        <div class='form-group'>
+            <input type='text' class="form-control" placeholder="Description" id="description" name="description"
+                #description='ngModel' [(ngModel)]="videoAdd.description" required>
+        </div>
+        <div class="form-group d-flex justify-content-center">
+            <button class="btn btn-primary" [disabled]='myForm.invalid || this.photo == null || this.video == null'
+                (click)="load()">Load</button>
+        </div>
+    </form>
+</div>

@@ -1,7 +1,6 @@
 ﻿using AutoMapper;
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using VideoHosting.Abstractions.Dto;
@@ -24,11 +23,12 @@ namespace VideoHosting.Services.Services
             _mapper = mapper;
         }
 
-        public async Task AddVideo(VideoDto videoDto)
+        public async Task<Guid> AddVideo(VideoAddDto videoDto)
         {
             User user = await _unit.UserRepository.GetUserById(videoDto.UserId);
             Video video = new Video
             {
+                Id = Guid.NewGuid(),
                 Name = videoDto.Name,
                 Description = videoDto.Description,
                 Views = 0,
@@ -39,6 +39,9 @@ namespace VideoHosting.Services.Services
             };
 
             await _unit.VideoRepository.AddVideo(video);
+            await _unit.SaveAsync();
+
+            return video.Id;
         }
 
         public async Task RemoveVideo(Guid videoId)
@@ -74,8 +77,8 @@ namespace VideoHosting.Services.Services
 
             videoDto.PhotoPath = _unit.AppSwitchRepository.GetValue(AppSwitchConstants.VideoPhotoKey) + videoDto.PhotoPath;
             videoDto.VideoPath = _unit.AppSwitchRepository.GetValue(AppSwitchConstants.VideoKey) + videoDto.VideoPath;
-            videoDto.Liked = video.Likes.FirstOrDefault(x => x.User == user) == null;
-            videoDto.Disliked = video.Dislikes.FirstOrDefault(x => x.User == user) == null;
+            videoDto.Liked = video.Reactions.FirstOrDefault(x => x.User == user && x.IsPositive) != null;
+            videoDto.Disliked = video.Reactions.FirstOrDefault(x => x.User == user && !x.IsPositive) != null;
 
             return videoDto;
         }
@@ -83,28 +86,14 @@ namespace VideoHosting.Services.Services
         public async Task<IEnumerable<VideoDto>> GetDisLikedVideos(string userId)
         {
             User user = await _unit.UserRepository.GetUserById(userId);
-            IEnumerable<VideoDto> videoDtos = _mapper.Map<IEnumerable<VideoDto>>(user.Dislikes.Select(x => x.Video));
-
-            foreach (var video in videoDtos)
-            {
-                video.PhotoPath = _unit.AppSwitchRepository.GetValue(AppSwitchConstants.VideoPhotoKey) + video.PhotoPath;
-                video.VideoPath = _unit.AppSwitchRepository.GetValue(AppSwitchConstants.VideoKey) + video.VideoPath;
-            }
-
+            IEnumerable<VideoDto> videoDtos = _mapper.Map<IEnumerable<VideoDto>>(user.Reactions.Where(x => !x.IsPositive).Select(x => x.Video));
             return videoDtos;
         }
 
         public async Task<IEnumerable<VideoDto>> GetLikedVideos(string userId)
         {
             User user = await _unit.UserRepository.GetUserById(userId);
-            IEnumerable<VideoDto> videoDtos = _mapper.Map<IEnumerable<VideoDto>>(user.Likes.Select(x => x.Video));
-
-            foreach (var video in videoDtos)
-            {
-                video.PhotoPath = _unit.AppSwitchRepository.GetValue(AppSwitchConstants.VideoPhotoKey) + video.PhotoPath;
-                video.VideoPath = _unit.AppSwitchRepository.GetValue(AppSwitchConstants.VideoKey) + video.VideoPath;
-            }
-
+            IEnumerable<VideoDto> videoDtos = _mapper.Map<IEnumerable<VideoDto>>(user.Reactions.Where(x => x.IsPositive).Select(x => x.Video));
             return videoDtos;
         }
 
@@ -125,14 +114,7 @@ namespace VideoHosting.Services.Services
         {
             IEnumerable<Video> videos = await _unit.VideoRepository.GetVideosByName(name);
             videos.OrderByDescending(x => x.DayOfCreation).ToList();
-            
             IEnumerable<VideoDto> videoDtos = _mapper.Map<IEnumerable<VideoDto>>(videos);
-
-            foreach (var video in videoDtos)
-            {
-                video.PhotoPath = _unit.AppSwitchRepository.GetValue(AppSwitchConstants.VideoPhotoKey) + video.PhotoPath;
-                video.VideoPath = _unit.AppSwitchRepository.GetValue(AppSwitchConstants.VideoKey) + video.VideoPath;
-            }
 
             return videoDtos;
         }
@@ -141,40 +123,7 @@ namespace VideoHosting.Services.Services
         {
             User user = await _unit.UserRepository.GetUserById(userId);
             IEnumerable<VideoDto> videoDtos = _mapper.Map<IEnumerable<VideoDto>>(user.Videos);
-
-            foreach (var video in videoDtos)
-            {
-                video.PhotoPath = _unit.AppSwitchRepository.GetValue(AppSwitchConstants.VideoPhotoKey) + video.PhotoPath;
-                video.VideoPath = _unit.AppSwitchRepository.GetValue(AppSwitchConstants.VideoKey) + video.VideoPath;
-            }
-
             return videoDtos;
-        }
-
-        public async Task PutLike(Guid videoId, string userId)
-        {
-            User user = await _unit.UserRepository.GetUserById(userId);
-            Video video = await _unit.VideoRepository.GetVideoById(videoId);
-            if (video == null)
-            {
-                throw new InvalidDataException("This video do not exist");
-            }
-
-            user.AddLike(video);
-            await _unit.SaveAsync();
-        }
-
-        public async Task PutDislike(Guid videoId, string userId)
-        {
-            User user = await _unit.UserRepository.GetUserById(userId);
-            Video video = await _unit.VideoRepository.GetVideoById(videoId);
-            if (video == null)
-            {
-                throw new InvalidDataException("This video do not exist");
-            }
-
-            user.AddDislike(video);
-            await _unit.SaveAsync();
         }
     }
 }

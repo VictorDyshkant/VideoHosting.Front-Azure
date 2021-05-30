@@ -6,7 +6,6 @@ using VideoHosting.Abstractions.Dto;
 using VideoHosting.Abstractions.Services;
 using VideoHosting.Abstractions.UnitOfWork;
 using VideoHosting.Domain.Entities;
-using VideoHosting.Utilities.Constants;
 
 namespace VideoHosting.Services.Services
 {
@@ -32,7 +31,7 @@ namespace VideoHosting.Services.Services
             User user = _mapper.Map<User>(userDto);
 
             await _unitOfWork.UserManager.CreateAsync(user, userLoginDto.Password);
-            await _unitOfWork.UserManager.UpdateAsync(user);
+
             await _unitOfWork.UserManager.AddToRoleAsync(user, "User");
             await _unitOfWork.SaveAsync();
         }
@@ -43,9 +42,9 @@ namespace VideoHosting.Services.Services
             User userSub = await _unitOfWork.UserRepository.GetUserById(userId);
 
             UserDto userDto = _mapper.Map<UserDto>(user);
-            userDto.DoSubscribed = user.Subscribers.FirstOrDefault(x => x.Subscripter == userSub) != null;
-            userDto.Admin = await _unitOfWork.UserManager.IsInRoleAsync(userSub, "Admin");
-            userDto.PhotoPath = _unitOfWork.AppSwitchRepository.GetValue(AppSwitchConstants.UserPhotoKey) + userDto.PhotoPath;
+            userDto.DoSubscribed = userSub.Subscriptions.FirstOrDefault(x => x.SubscripterId == id) != null;
+            userDto.Roles = await _unitOfWork.UserManager.GetRolesAsync(user);
+            userDto.PhotoPath = userDto.PhotoPath;
 
             return userDto;
         }
@@ -83,19 +82,21 @@ namespace VideoHosting.Services.Services
 
             foreach (var user in users)
             {
-                await GetUserById(user.Id, userId);
+                userDtos.Add(await GetUserById(user.Id, userId));
             }
 
             return userDtos;
         }
 
-        public async Task Subscribe(string subscriberId, string subscriptionId)
+        public async Task<bool> Subscribe(string subscriberId, string subscriptionId)
         {
             User subscriber = await _unitOfWork.UserRepository.GetUserById(subscriberId);
             User subscription = await _unitOfWork.UserRepository.GetUserById(subscriptionId);
+            bool isSubscriber = false;
 
-            if (subscriber.Subscribers.FirstOrDefault(x => x.Subscripter == subscription) == null)
+            if (subscriber.Subscribers.FirstOrDefault(x => x.SubscripterId == subscriptionId) == null)
             {
+                isSubscriber = true;
                 subscriber.Subscribe(subscription);
             }
             else
@@ -104,6 +105,7 @@ namespace VideoHosting.Services.Services
             }
 
             await _unitOfWork.SaveAsync();
+            return isSubscriber;
         }
 
         public async Task UpdateProfile(UserDto userDto)
@@ -114,9 +116,7 @@ namespace VideoHosting.Services.Services
             user.Surname = userDto.Surname ?? user.Surname;
 
             user.Group = userDto.Group ?? user.Group;
-            user.Faculty = userDto.Faculty ?? user.Faculty;
             user.PhotoPath = userDto.PhotoPath ?? user.PhotoPath;
-            user.Sex = userDto.Sex;
 
             await _unitOfWork.SaveAsync();
         }

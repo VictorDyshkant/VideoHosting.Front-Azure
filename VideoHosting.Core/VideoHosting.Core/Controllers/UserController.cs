@@ -3,15 +3,16 @@ using System.Threading.Tasks;
 using System.IO;
 using Microsoft.AspNetCore.Mvc;
 using AutoMapper;
-using Microsoft.AspNetCore.Authentication;
-using VideoHosting.Core.Models;
 using Microsoft.AspNetCore.Authorization;
 using VideoHosting.Abstractions.Dto;
 using VideoHosting.Abstractions.Services;
+using System;
+using System.Linq;
 
 namespace VideoHosting.Core.Controllers
 {
     [Route("api/[controller]")]
+    [Authorize(AuthenticationSchemes = "Bearer")]
     [ApiController]
     public class UserController : ControllerBase
     {
@@ -26,40 +27,21 @@ namespace VideoHosting.Core.Controllers
         }
 
         [HttpPost]
-        [Route("Exist")]
-        public ActionResult IsExist(LoginUserModel model)
-        {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest("Invalid data");
-            }
-
-            return Ok(_userService.DoesExist(model.Email));
-        }
-
-        [HttpPost]
-        [Authorize(AuthenticationSchemes = "Bearer")]
-        [Route("Logout")]
-        public async Task<ActionResult> Logout()
-        {
-            await HttpContext.SignOutAsync("Bearer");
-            return Ok();
-        }
-
-        [HttpPost]
-        [Authorize(AuthenticationSchemes = "Bearer")]
-        [Route("AddPhoto")]
+        [Route("UpdateUserPhoto")]
         public async Task<ActionResult> UploadPhoto()
         {
             var files = HttpContext.Request.Form.Files;
-            string path = Path.Combine(Directory.GetCurrentDirectory(), "UsersContent/UsersPhotos");
+            string path = Path.Combine(Directory.GetCurrentDirectory(), "UsersContent\\UsersPhotos");
 
-            if (files[0].FileName.Contains(".JPG") || files[0].FileName.Contains(".png") || files[0].FileName.Contains(".jpg"))
+            UserDto user = await _userService.GetUserById(User.Identity.Name, User.Identity.Name);
+            string imagePath = string.IsNullOrWhiteSpace(user.PhotoPath) ? null : Path.Combine(path,user.PhotoPath.Split("/").Last());
+
+            if (files[0].FileName.Contains(".jpg") || files[0].FileName.Contains(".png") || files[0].FileName.Contains(".jpeg"))
             {
-                string storePath = files[0].FileName.Contains(".JPG") || files[0].FileName.Contains(".jpg") ? User.Identity.Name + ".JPG" : User.Identity.Name + ".png";
+                string storePath = files[0].FileName.Contains(".jpg") || files[0].FileName.Contains(".jpeg") ? Guid.NewGuid() + ".jpg" : Guid.NewGuid() + ".png";
                 string fullPath = Path.Combine(path, storePath);
 
-                if (System.IO.File.Exists(fullPath))
+                if (System.IO.File.Exists(imagePath))
                 {
                     System.IO.File.Delete(fullPath);
                 }
@@ -69,7 +51,6 @@ namespace VideoHosting.Core.Controllers
                     await files[0].CopyToAsync(stream);
                 }
 
-                UserDto user = await _userService.GetUserById(User.Identity.Name, User.Identity.Name);
                 user.PhotoPath = storePath;
                 await _userService.UpdateProfile(user);
             }
@@ -81,34 +62,27 @@ namespace VideoHosting.Core.Controllers
         }
 
         [HttpPut]
-        [Authorize(AuthenticationSchemes = "Bearer")]
         [Route("Subscribe/{Id}")]
         public async Task<ActionResult> Subscribe(string id)
         {
-            await _userService.Subscribe(User.Identity.Name, id);
-            return Ok("You subscribed");
+            bool isSubscribed = await _userService.Subscribe(User.Identity.Name, id);
+            return Ok(isSubscribed);
         }
 
         [HttpPut]
-        [Authorize(AuthenticationSchemes = "Bearer")]
-        [Route("UpdateUser")]
+        [Route("UpdateUserInfo")]
         public async Task<ActionResult> UpdateUser(UserDto model)
         {
-            if (ModelState.IsValid)
-            {
-                model.PhotoPath = null;
-                model.Id = User.Identity.Name;
+            model.PhotoPath = null;
+            model.Id = User.Identity.Name;
 
-                await _userService.UpdateProfile(model);
-                return Ok("You changed data");
-            }
-            return BadRequest("Invalid data");
+            await _userService.UpdateProfile(model);
+            return Ok(new { message = "You changed data" });
         }
 
 
         [HttpGet]
-        [Authorize(AuthenticationSchemes = "Bearer")]
-        [Route("profileUser/{Id}")]
+        [Route("ProfileUser/{Id}")]
         public async Task<ActionResult> GetUser(string id)
         {
             UserDto user = await _userService.GetUserById(id, User.Identity.Name);
@@ -116,7 +90,6 @@ namespace VideoHosting.Core.Controllers
         }
 
         [HttpGet]
-        [Authorize(AuthenticationSchemes = "Bearer")]
         [Route("subscribers")]
         public async Task<ActionResult> GetSubscribers()
         {
@@ -125,8 +98,7 @@ namespace VideoHosting.Core.Controllers
         }
 
         [HttpGet]
-        [Authorize(AuthenticationSchemes = "Bearer")]
-        [Route("subscriptions")]
+        [Route("FindSubscriptions")]
         public async Task<ActionResult> GetSubscriptions()
         {
             IEnumerable<UserDto> users = await _userService.GetSubscriptions(User.Identity.Name);
@@ -134,11 +106,10 @@ namespace VideoHosting.Core.Controllers
         }
 
         [HttpGet]
-        [Authorize(AuthenticationSchemes = "Bearer")]
-        [Route("findByName/{str}")]
-        public async Task<ActionResult> GetUserByName(string str)
+        [Route("FindUserByName/{name}")]
+        public async Task<ActionResult> GetUserByName(string name)
         {
-            IEnumerable<UserDto> users = await _userService.GetUserBySubName(str, User.Identity.Name);
+            IEnumerable<UserDto> users = await _userService.GetUserBySubName(name, User.Identity.Name);
             return Ok(users);
         }
     }

@@ -1,0 +1,15 @@
+<a class="text_decoration_none" [routerLink]="['/main/profile/'+user.id]">
+    <div class="user__block__wrapper">
+        <div class="user__block">
+            <div>
+                <img class="user__img" [src]="user.photoPath">
+            </div>
+            <div class="user__body__wrapper">
+                <div class="user__body">
+                    <h5 class="user__name">{{user.name}} {{user.surname}}</h5>
+                    <p class="user__email">{{user.email}}</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</a>

@@ -25,7 +25,7 @@ namespace VideoHosting.DataBase.Repositories
         public async Task<IEnumerable<Commentary>> GetCommentariesByVideoId(Guid id)
         {
             Video com = await _context.Videos.FirstOrDefaultAsync(x => x.Id == id);
-            return com.Commentaries.ToList();
+            return com.Commentaries.OrderByDescending(x => x.DayOfCreation).ToList();
         }
 
         public async Task<Commentary> GetCommentaryById(Guid id)

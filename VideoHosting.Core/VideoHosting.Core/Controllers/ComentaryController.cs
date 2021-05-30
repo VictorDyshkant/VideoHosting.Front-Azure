@@ -22,7 +22,7 @@ namespace VideoHosting.Core.Controllers
         }
 
         [HttpGet]
-        [Route("Commentary/{id}")]
+        [Route("CommentaryByVideo/{id}")]
         public async Task<ActionResult> GetCommentariesByVideoId(Guid id)
         {
             IEnumerable<CommentaryDto> commentaryDto = await _commentaryService.GetCommentariesByVideoId(id);
@@ -30,30 +30,46 @@ namespace VideoHosting.Core.Controllers
         }
 
         [HttpPost]
-        [Route("Commentary")]
+        [Route("AddCommentary")]
         public async Task<ActionResult> CreateCommentary(CommentaryDto model)
         {
             if (ModelState.IsValid)
             {
                 await _commentaryService.AddCommentary(model);
-                return Ok("You added Commentary");
+                return Ok(new { message = "You added commentary." });
             }
 
             return BadRequest();
         }
 
         [HttpDelete]
-        [Route("Commentaries/{id}")]
+        [Route("DeleteCommentary/{id}")]
         public async Task<ActionResult> DeleteCommentary(Guid id)
         {
             CommentaryDto commentary = await _commentaryService.GetCommentaryById(id);
             if (commentary.UserId == User.Identity.Name || User.IsInRole("Admin"))
             {
                 await _commentaryService.RemoveCommentary(id);
-                return Ok("This Commentary was deleted");
+                return Ok(new { message = "This commentary was deleted." });
             }
 
-            return Unauthorized();
+            return BadRequest("You do not have rules to do it.");
+        }
+
+        [HttpPut]
+        [Route("PutLike/{id}")]
+        public async Task<ActionResult> PutLike(Guid id)
+        {
+            await _commentaryService.PutLike(id, User.Identity.Name);
+            return Ok();
+        }
+
+        [HttpPut]
+        [Route("PutDislike/{id}")]
+        public async Task<ActionResult> PutDislike(Guid id)
+        {
+            await _commentaryService.PutDislike(id, User.Identity.Name);
+            return Ok();
         }
     }
 }

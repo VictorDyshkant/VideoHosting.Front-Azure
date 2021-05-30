@@ -2,6 +2,8 @@
 using System.IdentityModel.Tokens.Jwt;
 using System.Threading.Tasks;
 using AutoMapper;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
 using VideoHosting.Abstractions.Dto;
@@ -25,11 +27,18 @@ namespace VideoHosting.Core.Controllers
             _userService = userService;
             _mapper = mapper;
         }
+        
+        [HttpGet]
+        [Route("IsExist/{email}")]
+        public ActionResult IsExist(string email)
+        {
+            return Ok(_userService.DoesExist(email));
+        }
 
         [HttpPost]
-        [Route("Register")]
-        public async Task<ActionResult> Register(UserRegistrationModel model)
-        {
+        [Route("Registrate")]
+        public async Task<ActionResult> Registrate(UserRegistrationModel model)
+       {
             if (ModelState.IsValid)
             {
                 UserDto userDto = _mapper.Map<UserDto>(model);
@@ -39,7 +48,7 @@ namespace VideoHosting.Core.Controllers
                 return Ok();
             }
 
-            return BadRequest("Invalid data," + ModelState.Values);
+            return BadRequest("Invalid data, " + ModelState.Values);
         }
 
         [HttpPost]
@@ -52,7 +61,7 @@ namespace VideoHosting.Core.Controllers
 
                 if (identity == null)
                 {
-                    return BadRequest(new { errorText = "Invalid username or password." });
+                    return BadRequest("Invalid username or password.");
                 }
 
                 var now = DateTime.UtcNow;
@@ -68,11 +77,20 @@ namespace VideoHosting.Core.Controllers
                 var response = new
                 {
                     access_token = encodedJwt,
-                    username = identity.Name
+                    id = identity.Name
                 };
                 return Ok(response);
             }
             return BadRequest("Invalid login");
+        }
+
+        [HttpPost]
+        [Authorize(AuthenticationSchemes = "Bearer")]
+        [Route("Logout")]
+        public async Task<ActionResult> Logout()
+        {
+            await HttpContext.SignOutAsync();
+            return Ok();
         }
     }
 }

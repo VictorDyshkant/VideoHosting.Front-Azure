@@ -7,13 +7,9 @@ namespace VideoHosting.Domain.Entities
 {
     public class User : IdentityUser
     {
-        public string Id { get; set; }
-
         public string Name { get; set; }
 
         public string Surname { get; set; }
-
-        public bool Sex { get; set; }
 
         public string Faculty { get; set; }
 
@@ -33,9 +29,7 @@ namespace VideoHosting.Domain.Entities
 
         public virtual List<UserUser> Subscriptions { get; set; }
 
-        public virtual List<VideoUser> Likes { get; set; }
-
-        public virtual List<VideoUser> Dislikes { get; set; }
+        public virtual List<VideoUser> Reactions { get; set; }
 
         public User()
         {
@@ -45,37 +39,49 @@ namespace VideoHosting.Domain.Entities
             Subscribers = new List<UserUser>();
             Subscriptions = new List<UserUser>();
 
-            Likes = new List<VideoUser>();
-            Dislikes = new List<VideoUser>();
+            Reactions = new List<VideoUser>();
         }
 
         public void AddLike(Video video)
         {
-            if (Dislikes.FirstOrDefault(x => x.Video == video) != null)
+            if (Reactions.FirstOrDefault(x => x.Video == video && !x.IsPositive) != null)
             {
-                Dislikes.Remove(Dislikes.FirstOrDefault(x => x.Video == video));
+                Reactions.FirstOrDefault(x => x.Video == video && !x.IsPositive).IsPositive = true;
+                return;
             }
-            Likes.Add(new VideoUser() { Video = video, User = this });
-        }
 
-        public void DeleteLike(Video video)
-        {
-            Dislikes.Remove(Dislikes.FirstOrDefault(x => x.Video == video));
+            if (Reactions.FirstOrDefault(x => x.Video == video && x.IsPositive) != null)
+            {
+                Reactions.Remove(Reactions.FirstOrDefault(x => x.Video == video && x.IsPositive));
+                return;
+            }
+
+            if(Reactions.FirstOrDefault(x => x.Video == video) == null)
+            {
+                Reactions.Add(new VideoUser { Video = video, User = this, IsPositive = true });
+                return;
+            }
         }
 
         public void AddDislike(Video video)
         {
-            if (Likes.FirstOrDefault(x => x.Video == video) != null)
+            if (Reactions.FirstOrDefault(x => x.Video == video && x.IsPositive) != null)
             {
-                Likes.Remove(Likes.FirstOrDefault(x => x.Video == video));
+                Reactions.FirstOrDefault(x => x.Video == video && x.IsPositive).IsPositive = false;
+                return;
             }
 
-            Dislikes.Add(new VideoUser { Video = video, User = this });
-        }
+            if (Reactions.FirstOrDefault(x => x.Video == video && !x.IsPositive) != null)
+            {
+                Reactions.Remove(Reactions.FirstOrDefault(x => x.Video == video && !x.IsPositive));
+                return;
+            }
 
-        public void DeleteDislike(Video video)
-        {
-            Dislikes.Remove(Likes.FirstOrDefault(x => x.Video == video));
+            if (Reactions.FirstOrDefault(x => x.Video == video) == null)
+            {
+                Reactions.Add(new VideoUser { Video = video, User = this, IsPositive = true });
+                return;
+            }
         }
 
         public void Subscribe(User user)

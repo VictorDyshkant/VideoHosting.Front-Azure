@@ -61,10 +61,6 @@ namespace VideoHosting.Core
                            };
                        });
 
-            services.AddSwaggerGen(c =>
-            {
-                c.SwaggerDoc("v1", new OpenApiInfo { Title = "My API", Version = "v1" });
-            });
             services.AddCors(options =>
             {
                 options.AddPolicy("CorsPolicy",
@@ -88,27 +84,25 @@ namespace VideoHosting.Core
             {
                 app.UseDeveloperExceptionPage();
             }
-
-            app.UseMiddleware<LogMiddleware>();
-            app.UseSwagger();
-            app.UseSwaggerUI(c =>
-            {
-                c.SwaggerEndpoint("/swagger/v1/swagger.json", "My API V1");
-                c.RoutePrefix = string.Empty;
-            });
-
+           
+            app.UseCors("CorsPolicy");
+            
             app.UseDirectoryBrowser(new DirectoryBrowserOptions
             {
-                FileProvider = new PhysicalFileProvider(Path.Combine(Directory.GetCurrentDirectory(), "UserContent")),
-                RequestPath = new PathString("/Content")
+                FileProvider = new PhysicalFileProvider(Path.Combine(Directory.GetCurrentDirectory(), "UsersContent")),
+                RequestPath = new PathString("/UsersContent")
+            });
+            app.UseStaticFiles(new StaticFileOptions
+            {
+                FileProvider = new PhysicalFileProvider(Path.Combine(Directory.GetCurrentDirectory(), "UsersContent")),
+                RequestPath = new PathString("/UsersContent")
             });
 
-            app.UseStaticFiles();
+            app.UseMiddleware<LogMiddleware>();
             app.UseAuthentication();
 
             app.UseHttpsRedirection();
             app.UseMvc();
-            app.UseCors("CorsPolicy");
         }
 
         private void ConfigureDependencies(IServiceCollection services)

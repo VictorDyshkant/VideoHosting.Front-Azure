@@ -1,0 +1,27 @@
+<a class="text_decoration_none" [routerLink]="['/watchvideo/'+video.id]">
+    <div class="video__block__wrapper">
+        <div class="card">
+            <img class="card-img-top" [src]="video.photoPath">
+            <div class="card-body">
+                <h6>{{video.name | slice:0:30}}</h6>
+                <p>{{video.userName}} {{video.userSurname}}</p>
+                <div class="video__data">
+                    <div>
+                        <img src="assets/img/eye.svg">
+                        <span class="text-decoration-none">{{video.views}}</span>
+                    </div>
+
+                    <div>
+                        <img src="assets/img/hand-thumbs-up.svg">
+                        <span>{{video.likes}}</span>
+                    </div>
+
+                    <div>
+                        <img src="assets/img/hand-thumbs-down.svg">
+                        <span>{{video.dislikes}}</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</a>
