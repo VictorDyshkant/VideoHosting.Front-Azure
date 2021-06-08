@@ -94,7 +94,7 @@ namespace VideoHosting.Services.Services
             User subscription = await _unitOfWork.UserRepository.GetUserById(subscriptionId);
             bool isSubscriber = false;
 
-            if (subscriber.Subscribers.FirstOrDefault(x => x.SubscripterId == subscriptionId) == null)
+            if (subscriber.Subscriptions.FirstOrDefault(x => x.SubscripterId == subscriptionId) == null)
             {
                 isSubscriber = true;
                 subscriber.Subscribe(subscription);

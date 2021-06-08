@@ -96,7 +96,7 @@ namespace VideoHosting.Domain.Entities
         {
             if (Subscriptions.FirstOrDefault(x => x.Subscripter == user) != null)
             {
-                Subscribers.Remove(Subscriptions.FirstOrDefault(x => x.Subscripter == user));
+                Subscriptions.Remove(Subscriptions.FirstOrDefault(x => x.Subscripter == user));
             }
         }
     }
