@@ -5,7 +5,7 @@ import { ToastrService } from 'ngx-toastr';
 import { Observable, of } from 'rxjs';
 import { catchError, concatMap, retry, share } from 'rxjs/operators';
 import { ErrorHandler } from 'src/app/aCommon/errorHandler';
-import { RegistrationModel } from '../models/Registration.model';
+import { RegistrationModel } from '../registration.model';
 import { RegistrationService } from '../services/registration.service';
 
 @Component({
