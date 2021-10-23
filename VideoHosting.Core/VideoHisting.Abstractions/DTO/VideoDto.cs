@@ -16,6 +16,10 @@ namespace VideoHosting.Abstractions.Dto
 
         public string PhotoPath { get; set; }
 
+        public string VideoName { get; set; }
+
+        public string PhotoName { get; set; }
+
         public int Likes { get; set; }
 
         public int Dislikes { get; set; }

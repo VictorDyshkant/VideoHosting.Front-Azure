@@ -21,6 +21,8 @@ namespace VideoHosting.Abstractions.Dto
 
         public string PhotoPath { get; set; }
 
+        public string PhotoName { get; set; }
+
         public DateTime DateOfCreation { get; set; }
 
         public int Subscriptions { get; set; }

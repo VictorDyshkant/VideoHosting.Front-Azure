@@ -39,9 +39,9 @@ namespace VideoHosting.Core.Controllers
             if (files[0].FileName.Contains(".jpg") || files[0].FileName.Contains(".png") || files[0].FileName.Contains(".jpeg"))
             {
                 BlobContainerClient photoContainer = new BlobContainerClient(connectionString, "userphotos");               
-                if (!string.IsNullOrWhiteSpace(user.PhotoPath))
+                if (!string.IsNullOrWhiteSpace(user.PhotoName))
                 {
-                    BlobClient photoRemoveBlobClient = photoContainer.GetBlobClient(user.PhotoPath);
+                    BlobClient photoRemoveBlobClient = photoContainer.GetBlobClient(user.PhotoName);
                     await photoRemoveBlobClient.DeleteAsync();
                 }
 

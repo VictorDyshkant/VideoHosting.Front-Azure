@@ -20,7 +20,8 @@ namespace VideoHosting.Services.Mapper
                .ForMember(c => c.DateOfCreation, x => x.MapFrom(c => c.DateOfCreation))
                .ForMember(c => c.Subscribers, x => x.MapFrom(c => c.Subscribers.Count))
                .ForMember(c => c.Subscriptions, x => x.MapFrom(c => c.Subscriptions.Count))
-               .ForMember(c => c.PhotoPath, x => x.MapFrom(c => c.PhotoPath != null ? configuration.GetSection("Settings:UserPhoto").Value + c.PhotoPath : null));
+               .ForMember(c => c.PhotoPath, x => x.MapFrom(c => c.PhotoPath != null ? configuration.GetSection("Settings:UserPhoto").Value + c.PhotoPath : null))
+               .ForMember(c => c.PhotoName, x => x.MapFrom(c => c.PhotoPath));
 
             CreateMap<UserDto, User>()
                 .ForMember(c => c.Name, x => x.MapFrom(c => c.Name.Trim()))
@@ -53,6 +54,8 @@ namespace VideoHosting.Services.Mapper
                 .ForMember(v => v.Name, x => x.MapFrom(p => p.Name))
                 .ForMember(v => v.PhotoPath, x => x.MapFrom(p => p.PhotoPath != null ? configuration.GetSection("Settings:VideoPhoto").Value + p.PhotoPath : null))
                 .ForMember(v => v.VideoPath, x => x.MapFrom(p => p.VideoPath != null ? configuration.GetSection("Settings:Video").Value + p.VideoPath : null))
+                .ForMember(v => v.PhotoName, x => x.MapFrom(p => p.PhotoPath))
+                .ForMember(v => v.VideoName, x => x.MapFrom(p => p.VideoPath))
                 .ForMember(v => v.Views, x => x.MapFrom(p => p.Views))
                 .ForMember(v => v.Likes, x => x.MapFrom(p => p.Reactions.Where(y => y.IsPositive).Count()))
                 .ForMember(v => v.Dislikes, x => x.MapFrom(p => p.Reactions.Where(y => !y.IsPositive).Count()))

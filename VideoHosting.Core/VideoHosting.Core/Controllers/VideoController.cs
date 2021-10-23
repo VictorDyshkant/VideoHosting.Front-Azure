@@ -66,8 +66,8 @@ namespace VideoHosting.Core.Controllers
                 BlobContainerClient photoContainer = new BlobContainerClient(connectionString, "videophotos");
                 BlobContainerClient videoContainer = new BlobContainerClient(connectionString, "videos");
 
-                BlobClient photoRemoveBlobClient = photoContainer.GetBlobClient(videoDto.PhotoPath);
-                BlobClient videoRemoveBlobClient = videoContainer.GetBlobClient(videoDto.VideoPath);
+                BlobClient photoRemoveBlobClient = photoContainer.GetBlobClient(videoDto.PhotoName);
+                BlobClient videoRemoveBlobClient = videoContainer.GetBlobClient(videoDto.VideoName);
 
                 await photoRemoveBlobClient.DeleteAsync();
                 await videoRemoveBlobClient.DeleteAsync();
