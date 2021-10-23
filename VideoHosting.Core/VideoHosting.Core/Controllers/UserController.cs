@@ -8,6 +8,8 @@ using VideoHosting.Abstractions.Dto;
 using VideoHosting.Abstractions.Services;
 using System;
 using System.Linq;
+using Azure.Storage.Blobs;
+using Microsoft.Extensions.Configuration;
 
 namespace VideoHosting.Core.Controllers
 {
@@ -17,10 +19,10 @@ namespace VideoHosting.Core.Controllers
     public class UserController : ControllerBase
     {
         private readonly IUserService _userService;
-
+        private readonly IConfiguration _configuration;
         private readonly IMapper _mapper;
 
-        public UserController(IUserService service, IMapper mapper)
+        public UserController(IUserService service, IMapper mapper, IConfiguration config)
         {
             _mapper = mapper;
             _userService = service;
@@ -30,34 +32,33 @@ namespace VideoHosting.Core.Controllers
         [Route("UpdateUserPhoto")]
         public async Task<ActionResult> UploadPhoto()
         {
+            string connectionString = _configuration.GetConnectionString("BlobStorage");
             var files = HttpContext.Request.Form.Files;
-            string path = Path.Combine(Directory.GetCurrentDirectory(), "UsersContent\\UsersPhotos");
-
+            
             UserDto user = await _userService.GetUserById(User.Identity.Name, User.Identity.Name);
-            string imagePath = string.IsNullOrWhiteSpace(user.PhotoPath) ? null : Path.Combine(path,user.PhotoPath.Split("/").Last());
-
+     
             if (files[0].FileName.Contains(".jpg") || files[0].FileName.Contains(".png") || files[0].FileName.Contains(".jpeg"))
             {
-                string storePath = files[0].FileName.Contains(".jpg") || files[0].FileName.Contains(".jpeg") ? Guid.NewGuid() + ".jpg" : Guid.NewGuid() + ".png";
-                string fullPath = Path.Combine(path, storePath);
-
-                if (System.IO.File.Exists(imagePath))
+                BlobContainerClient photoContainer = new BlobContainerClient(connectionString, "UserPhoto");               
+                if (!string.IsNullOrWhiteSpace(user.PhotoPath))
                 {
-                    System.IO.File.Delete(fullPath);
+                    BlobClient photoRemoveBlobClient = photoContainer.GetBlobClient(user.PhotoPath);
+                    await photoRemoveBlobClient.DeleteAsync();
                 }
 
-                using (var stream = System.IO.File.Create(fullPath))
-                {
-                    await files[0].CopyToAsync(stream);
-                }
+                string photo = files[0].FileName.Contains(".jpg") || files[0].FileName.Contains(".jpeg") ? Guid.NewGuid() + ".jpg" : Guid.NewGuid() + ".png";
+                user.PhotoPath = photo;
 
-                user.PhotoPath = storePath;
+                BlobClient photoBlobClient = photoContainer.GetBlobClient(photo);
+                await photoBlobClient.UploadAsync(photo);
+                
                 await _userService.UpdateProfile(user);
             }
             else
             {
                 return BadRequest("Image should be .jpg or .png");
             }
+
             return Ok();
         }
 

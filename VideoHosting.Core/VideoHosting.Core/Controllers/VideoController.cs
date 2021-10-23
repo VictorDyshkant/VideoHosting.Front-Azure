@@ -8,6 +8,8 @@ using VideoHosting.Abstractions.Dto;
 using VideoHosting.Abstractions.Services;
 using Microsoft.AspNetCore.Http;
 using System.Linq;
+using Microsoft.Extensions.Configuration;
+using Azure.Storage.Blobs;
 
 namespace VideoHosting.Core.Controllers
 {
@@ -17,52 +19,37 @@ namespace VideoHosting.Core.Controllers
     public class VideoController : ControllerBase
     {
         private readonly IVideoService _videoService;
+        private readonly IConfiguration _configuration;
 
-        public VideoController(IVideoService videoService)
+        public VideoController(IVideoService videoService, IConfiguration config)
         {
             _videoService = videoService;
+            _configuration = config;
         }
-
+        
         [HttpPost]
         [Route("UploadVideo")]
         [DisableRequestSizeLimit]
         public async Task<ActionResult> AddVideo([FromForm] VideoAddDto model)
         {
+            string connectionString = _configuration.GetConnectionString("BlobStorage");
+            
             model.UserId = User.Identity.Name;
             var files = HttpContext.Request.Form.Files;
-            string path = Path.Combine(Directory.GetCurrentDirectory(), "UsersContent");
 
-            for (int i = 0; i < 2; i++)
-            {
-                string save = Guid.NewGuid().ToString();
-                if (files[i].FileName.Contains(".jpg") || files[i].FileName.Contains(".jpeg"))
-                {
-                    model.PhotoPath = save + ".jpg";
-                    using (var stream = System.IO.File.Create(Path.Combine(path, "VideosPhotos", model.PhotoPath)))
-                    {
-                        await files[i].CopyToAsync(stream);
-                    }
-                }
-                if (files[i].FileName.Contains(".png"))
-                {
-                    model.PhotoPath = save + ".png";
-                    using (var stream = System.IO.File.Create(Path.Combine(path, "VideosPhotos", model.PhotoPath)))
-                    {
-                        await files[i].CopyToAsync(stream);
-                    }
-                }
-                if (files[i].FileName.Contains(".mp4"))
-                {
-                    model.VideoPath = save + ".mp4";
-                    using (var stream = System.IO.File.Create(Path.Combine(path, "UsersVideos", model.VideoPath)))
-                    {
-                        await files[i].CopyToAsync(stream);
-                    }
-                }
-            }
+            string photo = Guid.NewGuid().ToString();
+            model.PhotoPath = files[0].FileName.Contains(".png") ? photo + ".png" : photo + ".jpg";
 
+            BlobContainerClient photoContainer = new BlobContainerClient(connectionString, "VideoPhoto");
+            BlobClient photoBlobClient = photoContainer.GetBlobClient(model.PhotoPath);
+            await photoBlobClient.UploadAsync(model.PhotoPath);
+
+            model.VideoPath = Guid.NewGuid().ToString() + ".mp4";
+            BlobContainerClient videoContainer = new BlobContainerClient(connectionString, "Video");
+            BlobClient videoBlobClient = photoContainer.GetBlobClient(model.VideoPath);
+            await videoBlobClient.UploadAsync(model.VideoPath);
+            
             Guid videoId = await _videoService.AddVideo(model);
-
             return Ok(videoId);
         }
 
@@ -75,11 +62,15 @@ namespace VideoHosting.Core.Controllers
             {
                 await _videoService.RemoveVideo(id);
 
-                string videoPath = Path.Combine(Directory.GetCurrentDirectory(), "UsersContent\\VideosPhotos", videoDto.PhotoPath.Split("/").Last());
-                string imagePath = Path.Combine(Directory.GetCurrentDirectory(), "UsersContent\\UsersVideos", videoDto.VideoPath.Split("/").Last());
+                string connectionString = _configuration.GetConnectionString("BlobStorage");
+                BlobContainerClient photoContainer = new BlobContainerClient(connectionString, "VideoPhoto");
+                BlobContainerClient videoContainer = new BlobContainerClient(connectionString, "Video");
 
-                System.IO.File.Delete(videoPath);
-                System.IO.File.Delete(imagePath);
+                BlobClient photoRemoveBlobClient = photoContainer.GetBlobClient(videoDto.PhotoPath);
+                BlobClient videoRemoveBlobClient = videoContainer.GetBlobClient(videoDto.VideoPath);
+
+                await photoRemoveBlobClient.DeleteAsync();
+                await videoRemoveBlobClient.DeleteAsync();
 
                 return Ok(new { message = "This video was deleted" });
             }

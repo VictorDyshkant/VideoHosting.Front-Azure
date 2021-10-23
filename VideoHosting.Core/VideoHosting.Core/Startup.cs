@@ -87,16 +87,16 @@ namespace VideoHosting.Core
            
             app.UseCors("CorsPolicy");
             
-            app.UseDirectoryBrowser(new DirectoryBrowserOptions
-            {
-                FileProvider = new PhysicalFileProvider(Path.Combine(Directory.GetCurrentDirectory(), "UsersContent")),
-                RequestPath = new PathString("/UsersContent")
-            });
-            app.UseStaticFiles(new StaticFileOptions
-            {
-                FileProvider = new PhysicalFileProvider(Path.Combine(Directory.GetCurrentDirectory(), "UsersContent")),
-                RequestPath = new PathString("/UsersContent")
-            });
+            //app.UseDirectoryBrowser(new DirectoryBrowserOptions
+            //{
+            //    FileProvider = new PhysicalFileProvider(Path.Combine(Directory.GetCurrentDirectory(), "UsersContent")),
+            //    RequestPath = new PathString("/UsersContent")
+            //});
+            //app.UseStaticFiles(new StaticFileOptions
+            //{
+            //    FileProvider = new PhysicalFileProvider(Path.Combine(Directory.GetCurrentDirectory(), "UsersContent")),
+            //    RequestPath = new PathString("/UsersContent")
+            //});
 
             app.UseMiddleware<LogMiddleware>();
             app.UseAuthentication();
@@ -107,6 +107,7 @@ namespace VideoHosting.Core
 
         private void ConfigureDependencies(IServiceCollection services)
         {
+            services.AddSingleton<IConfiguration>(Configuration);
             services.AddDbContext<DataBaseContext>(opt =>
             {
                 opt.UseSqlServer(Configuration.GetConnectionString("VideoHostingConnection"))

@@ -38,7 +38,7 @@ namespace VideoHosting.Core.Controllers
         [HttpPost]
         [Route("Registrate")]
         public async Task<ActionResult> Registrate(UserRegistrationModel model)
-       {
+        {
             if (ModelState.IsValid)
             {
                 UserDto userDto = _mapper.Map<UserDto>(model);

@@ -53,53 +53,53 @@ namespace VideoHosting.Core.Controllers
             return BadRequest("Invalid data");
         }
 
-        [HttpPut]
-        [Route("DropByEmail")]
-        public async Task<ActionResult> DropPassword(string email)
-        {
-            int pass = await _credentialService.DropPassword(email);
+        //[HttpPut]
+        //[Route("DropByEmail")]
+        //public async Task<ActionResult> DropPassword(string email)
+        //{
+        //    int pass = await _credentialService.DropPassword(email);
 
-            string myEmail = "dyshkant2804@gmail.com";
-            string password = "Qwerty280400";
+        //    string myEmail = "dyshkant2804@gmail.com";
+        //    string password = "Qwerty280400";
 
-            var msg = new MailMessage();
-            var smtpClient = new SmtpClient("smtp.gmail.com", 587);
-            var loginInfo = new NetworkCredential(email, password);
+        //    var msg = new MailMessage();
+        //    var smtpClient = new SmtpClient("smtp.gmail.com", 587);
+        //    var loginInfo = new NetworkCredential(email, password);
 
-            msg.From = new MailAddress(myEmail);
-            msg.To.Add(new MailAddress(email));
-            msg.Subject = "Recreation password";
-            msg.Body = "Here is your temporary password " + pass;
-            msg.IsBodyHtml = true;
+        //    msg.From = new MailAddress(myEmail);
+        //    msg.To.Add(new MailAddress(email));
+        //    msg.Subject = "Recreation password";
+        //    msg.Body = "Here is your temporary password " + pass;
+        //    msg.IsBodyHtml = true;
 
-            smtpClient.EnableSsl = true;
-            smtpClient.UseDefaultCredentials = false;
-            smtpClient.Credentials = loginInfo;
+        //    smtpClient.EnableSsl = true;
+        //    smtpClient.UseDefaultCredentials = false;
+        //    smtpClient.Credentials = loginInfo;
 
 
-            smtpClient.Send(msg);
-            return Ok("We sent you temporary password");
-        }
+        //    smtpClient.Send(msg);
+        //    return Ok("We sent you temporary password");
+        //}
 
-        [HttpPut]
-        [Route("addAdmin/{Id}")]
-        [Authorize(AuthenticationSchemes = "Bearer")]
-        [Authorize(Roles = "SuperAdmin")]
-        public async Task<ActionResult> AddAdmin(string id)
-        {
-            await _credentialService.AddAdmin(id);
-            return Ok();
-        }
+        //[HttpPut]
+        //[Route("addAdmin/{Id}")]
+        //[Authorize(AuthenticationSchemes = "Bearer")]
+        //[Authorize(Roles = "SuperAdmin")]
+        //public async Task<ActionResult> AddAdmin(string id)
+        //{
+        //    await _credentialService.AddAdmin(id);
+        //    return Ok();
+        //}
 
-        [HttpPut]
-        [Route("addAdmin/{Id}")]
-        [Authorize(AuthenticationSchemes = "Bearer")]
-        [Authorize(Roles = "SuperAdmin")]
-        public async Task<ActionResult> RemoveAdmin(string id)
-        {
-            await _credentialService.RemoveAdmin(id);
-            return Ok();
-        }
+        //[HttpPut]
+        //[Route("addAdmin/{Id}")]
+        //[Authorize(AuthenticationSchemes = "Bearer")]
+        //[Authorize(Roles = "SuperAdmin")]
+        //public async Task<ActionResult> RemoveAdmin(string id)
+        //{
+        //    await _credentialService.RemoveAdmin(id);
+        //    return Ok();
+        //}
 
         [HttpPut]
         [Route("updateUserLogin")]
