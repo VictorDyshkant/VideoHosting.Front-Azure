@@ -2,8 +2,8 @@ import { Injectable } from "@angular/core";
 
 import { HttpClient } from '@angular/common/http';
 import { Observable } from "rxjs";
-import { RegistrationModel } from "../models/Registration.model";
 import { environment } from "src/environments/environment";
+import { RegistrationModel } from "../models/Registration.model";
 
 @Injectable()
 export class RegistrationService {
