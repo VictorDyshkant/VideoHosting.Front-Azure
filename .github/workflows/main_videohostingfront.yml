@@ -27,7 +27,7 @@ jobs:
           npm run build 
           
       - name: Zip artifact for deployment
-        run: zip release.zip dist/Hosting-FrontEnd/* -r
+        run: zip release.zip dist/Hosting-FrontEnd/ -r
 
       - name: Upload artifact for deployment job
         uses: actions/upload-artifact@v2
@@ -58,4 +58,4 @@ jobs:
           app-name: 'VideoHostingFront'
           slot-name: 'Production'
           publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_5C2FE47D74D948BF917B27C54B481A71 }}
-          package: dist/Hosting-FrontEnd/
+          package: .
