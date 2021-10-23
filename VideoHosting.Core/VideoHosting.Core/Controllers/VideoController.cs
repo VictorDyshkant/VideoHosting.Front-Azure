@@ -40,14 +40,14 @@ namespace VideoHosting.Core.Controllers
             string photo = Guid.NewGuid().ToString();
             model.PhotoPath = files[0].FileName.Contains(".png") ? photo + ".png" : photo + ".jpg";
 
-            BlobContainerClient photoContainer = new BlobContainerClient(connectionString, "VideoPhoto");
+            BlobContainerClient photoContainer = new BlobContainerClient(connectionString, "videophotos");
             BlobClient photoBlobClient = photoContainer.GetBlobClient(model.PhotoPath);
-            await photoBlobClient.UploadAsync(model.PhotoPath);
+            await photoBlobClient.UploadAsync(files[0].OpenReadStream());
 
-            model.VideoPath = Guid.NewGuid().ToString() + ".mp4";
-            BlobContainerClient videoContainer = new BlobContainerClient(connectionString, "Video");
-            BlobClient videoBlobClient = photoContainer.GetBlobClient(model.VideoPath);
-            await videoBlobClient.UploadAsync(model.VideoPath);
+            model.VideoPath = Guid.NewGuid() + ".mp4";
+            BlobContainerClient videoContainer = new BlobContainerClient(connectionString, "videos");
+            BlobClient videoBlobClient = videoContainer.GetBlobClient(model.VideoPath);
+            await videoBlobClient.UploadAsync(files[1].OpenReadStream());
             
             Guid videoId = await _videoService.AddVideo(model);
             return Ok(videoId);
@@ -63,8 +63,8 @@ namespace VideoHosting.Core.Controllers
                 await _videoService.RemoveVideo(id);
 
                 string connectionString = _configuration.GetConnectionString("BlobStorage");
-                BlobContainerClient photoContainer = new BlobContainerClient(connectionString, "VideoPhoto");
-                BlobContainerClient videoContainer = new BlobContainerClient(connectionString, "Video");
+                BlobContainerClient photoContainer = new BlobContainerClient(connectionString, "videophotos");
+                BlobContainerClient videoContainer = new BlobContainerClient(connectionString, "videos");
 
                 BlobClient photoRemoveBlobClient = photoContainer.GetBlobClient(videoDto.PhotoPath);
                 BlobClient videoRemoveBlobClient = videoContainer.GetBlobClient(videoDto.VideoPath);

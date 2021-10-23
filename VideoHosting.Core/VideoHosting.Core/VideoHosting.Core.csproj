@@ -8,6 +8,13 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="UsersContent\**" />
+    <Content Remove="UsersContent\**" />
+    <EmbeddedResource Remove="UsersContent\**" />
+    <None Remove="UsersContent\**" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="Azure.Storage.Blobs" Version="12.10.0" />
     <PackageReference Include="Microsoft.AspNetCore.App" />
     <PackageReference Include="Microsoft.AspNetCore.Identity" Version="2.2.0" />
@@ -23,12 +30,6 @@
   <ItemGroup>
     <ProjectReference Include="..\VideoHostind.DataBase\VideoHosting.DataBase.csproj" />
     <ProjectReference Include="..\VideoHosting.Services\VideoHosting.Services.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="UsersContent\VideosPhotos\" />
-    <Folder Include="UsersContent\UsersVideos\" />
-    <Folder Include="UsersContent\UsersPhotos\" />
   </ItemGroup>
 
   <ItemGroup>

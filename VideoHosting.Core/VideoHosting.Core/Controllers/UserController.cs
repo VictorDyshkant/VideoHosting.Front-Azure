@@ -20,12 +20,11 @@ namespace VideoHosting.Core.Controllers
     {
         private readonly IUserService _userService;
         private readonly IConfiguration _configuration;
-        private readonly IMapper _mapper;
 
-        public UserController(IUserService service, IMapper mapper, IConfiguration config)
+        public UserController(IUserService service, IConfiguration config)
         {
-            _mapper = mapper;
             _userService = service;
+            _configuration = config;
         }
 
         [HttpPost]
@@ -39,7 +38,7 @@ namespace VideoHosting.Core.Controllers
      
             if (files[0].FileName.Contains(".jpg") || files[0].FileName.Contains(".png") || files[0].FileName.Contains(".jpeg"))
             {
-                BlobContainerClient photoContainer = new BlobContainerClient(connectionString, "UserPhoto");               
+                BlobContainerClient photoContainer = new BlobContainerClient(connectionString, "userphotos");               
                 if (!string.IsNullOrWhiteSpace(user.PhotoPath))
                 {
                     BlobClient photoRemoveBlobClient = photoContainer.GetBlobClient(user.PhotoPath);
@@ -50,7 +49,7 @@ namespace VideoHosting.Core.Controllers
                 user.PhotoPath = photo;
 
                 BlobClient photoBlobClient = photoContainer.GetBlobClient(photo);
-                await photoBlobClient.UploadAsync(photo);
+                await photoBlobClient.UploadAsync(files[0].OpenReadStream());
                 
                 await _userService.UpdateProfile(user);
             }
