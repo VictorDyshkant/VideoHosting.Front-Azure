@@ -4,7 +4,7 @@
 
 export const environment = {
   production: false,
-  url:"https://videohostingcore20211022071124.azurewebsites.net/api",
+  url:"https://videohostingcore.azurewebsites.net/api",
   defaultError:"Error",
   token:"Token",
   id:"UserId",
