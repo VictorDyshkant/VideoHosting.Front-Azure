@@ -44,7 +44,6 @@ namespace VideoHosting.Services.Services
             UserDto userDto = _mapper.Map<UserDto>(user);
             userDto.DoSubscribed = userSub.Subscriptions.FirstOrDefault(x => x.SubscripterId == id) != null;
             userDto.Roles = await _unitOfWork.UserManager.GetRolesAsync(user);
-            userDto.PhotoPath = userDto.PhotoPath;
 
             return userDto;
         }
