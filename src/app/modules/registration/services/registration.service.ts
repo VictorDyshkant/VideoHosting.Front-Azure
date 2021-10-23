@@ -19,5 +19,4 @@ export class RegistrationService {
     public registrate(registrationModel: RegistrationModel): Observable<Object> {
         return this.httpClient.post(environment.url + "/Authorization/Registrate", registrationModel);
     }
-
 }
