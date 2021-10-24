@@ -55,4 +55,4 @@ jobs:
           app-name: 'VideoHostingFront'
           slot-name: 'Production'
           publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_5C2FE47D74D948BF917B27C54B481A71 }}
-          package: Hosting-FrontEnd/*
+          package: Hosting-FrontEnd/
