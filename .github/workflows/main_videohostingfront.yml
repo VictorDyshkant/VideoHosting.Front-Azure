@@ -11,7 +11,7 @@ on:
 
 jobs:
   build:
-    runs-on: ubuntu-latest
+    runs-on: windows-latest
 
     steps:
       - uses: actions/checkout@v2
@@ -21,16 +21,17 @@ jobs:
         with:
           node-version: '14.x'
 
-      - name: npm install, build
+      - name: npm install, build, and test
         run: |
           npm install
-          npm run build 
-          
+          npm run build --if-present
+          npm run test --if-present
+      
       - name: Upload artifact for deployment job
         uses: actions/upload-artifact@v2
         with:
           name: node-app
-          path: dist/*
+          path: .
 
   deploy:
     runs-on: ubuntu-latest
@@ -44,15 +45,12 @@ jobs:
         uses: actions/download-artifact@v2
         with:
           name: node-app
-          
-      - name: Show Directory
-        run: ls -la    
 
       - name: 'Deploy to Azure Web App'
-        id: deploy-to-webapp
         uses: azure/webapps-deploy@v2
+        id: deploy-to-webapp
         with:
           app-name: 'VideoHostingFront'
           slot-name: 'Production'
-          publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_5C2FE47D74D948BF917B27C54B481A71 }}
-          package: Hosting-FrontEnd/
+          publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_F9DAD108832E4C2C9FD7022BE4FA5392 }}
+          package: .
