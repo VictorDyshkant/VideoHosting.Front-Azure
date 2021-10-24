@@ -17,8 +17,21 @@ export class VideoSubscriptionsComponent {
 
   constructor(private userService: UserService, private toastr: ToastrService) { }
 
+  ngOnInit(){
+    this.getSubsriptions();
+  }
+
   find(name: string) {
     this.$users = this.userService.findUserByName(name).pipe(
+      catchError((error: HttpErrorResponse) => {
+        this.toastr.error(error.message ?? error.error);
+        return throwError(error);
+      })
+    );
+  }
+
+  private getSubsriptions(){
+    this.$users = this.userService.findSubscriptions().pipe(
       catchError((error: HttpErrorResponse) => {
         this.toastr.error(error.message ?? error.error);
         return throwError(error);
