@@ -30,7 +30,7 @@ jobs:
         uses: actions/upload-artifact@v2
         with:
           name: node-app
-          path: dist/Hosting-FrontEnd/*
+          path: dist/*
 
   deploy:
     runs-on: ubuntu-latest
@@ -55,7 +55,4 @@ jobs:
           app-name: 'VideoHostingFront'
           slot-name: 'Production'
           publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_5C2FE47D74D948BF917B27C54B481A71 }}
-          package: .
-          
-      - name: Show Directory
-        run: ls -la
+          package: Hosting-FrontEnd/*
